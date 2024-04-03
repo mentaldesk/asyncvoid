@@ -18,6 +18,23 @@ dotnet add package MentalDesk.AsyncVoid
 
 Most typically, you'd use this if you needed to run some asynchronous code from within an event handler in a UI application (such as WinForms, WinUI or UWP). In that case, you'd need to change the event handler to be an async void :-(
 
-```csharp
+So you might have some code like this for example:
 
+```csharp
+private async void button1_Click(object sender, EventArgs e)
+{
+    await SomeMethodAsync();
+}
+```
+
+If `SomeMethodAsync` throws an exception, it will crash your application. To avoid this, the code can be modified to call `SomeMethodAsync` using the utility class from this package:
+
+```csharp
+private async void button1_Click(object sender, EventArgs e)
+{
+    AsyncVoid.RunSafely(
+        async () => await SomeMethodAsync(), 
+        ex => MessageBox.Show(ex.Message)
+    );
+}
 ```
